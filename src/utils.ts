@@ -10,11 +10,21 @@ export class Utils {
     public static createGround(scene: BABYLON.Scene): BABYLON.Mesh {
 
         //groundMaterial.diffuseTexture.uScale = groundMaterial.diffuseTexture.vScale = 4;
-        let ground = BABYLON.Mesh.CreateGroundFromHeightMap("ground", "assets/texture/height-map/D2.png", 200, 200, 20, 0, 100, scene, false, () => {
-            let groundMaterial = new BABYLON.StandardMaterial("groundMaterial", scene);
-            groundMaterial.diffuseTexture = new BABYLON.Texture("assets/texture/height-map/C2W.png", scene);
-            ground.material = groundMaterial;
-        });
+        let ground = BABYLON.Mesh.CreateGroundFromHeightMap(
+            "ground",
+            "assets/texture/height-map/D2.png",
+            2000,
+            2000,
+            20,
+            0,
+            100,
+            scene,
+            false,
+            () => {
+                let groundMaterial = new BABYLON.StandardMaterial("groundMaterial", scene);
+                groundMaterial.diffuseTexture = new BABYLON.Texture("assets/texture/height-map/C2W.png", scene);
+                ground.material = groundMaterial;
+            });
         ground.position.y = -1;
 
         return ground;
