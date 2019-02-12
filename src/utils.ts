@@ -24,8 +24,10 @@ export class Utils {
                 let groundMaterial = new BABYLON.StandardMaterial("groundMaterial", scene);
                 groundMaterial.diffuseTexture = new BABYLON.Texture("assets/texture/height-map/C2W.png", scene);
                 ground.material = groundMaterial;
+                ground.checkCollisions = true;
             });
-        ground.position.y = -1;
+
+        // ground.position.y = -1;
 
         return ground;
     }
