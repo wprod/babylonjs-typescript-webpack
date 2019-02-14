@@ -17,7 +17,7 @@ export class Utils {
             2000,
             20,
             0,
-            100,
+            200,
             scene,
             false,
             () => {
@@ -27,7 +27,7 @@ export class Utils {
                 ground.checkCollisions = true;
             });
 
-        // ground.position.y = -1;
+        ground.position.y = -100;
 
         return ground;
     }

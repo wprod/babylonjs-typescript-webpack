@@ -8,5 +8,7 @@ window.addEventListener('DOMContentLoaded', () => {
   window.CANNON = CANNON;
   let game = new App('renderCanvas');
   game.createScene();
+  game.modifySettings();
+  game.createCamera();
   game.animate();
 });
