@@ -1,12 +1,12 @@
-import { App } from './app';
-import 'babylonjs-materials';
 import 'babylonjs-loaders';
+import 'babylonjs-materials';
 import CANNON = require('cannon');
+import { App } from './app';
 
 window.addEventListener('DOMContentLoaded', () => {
   // Set global variable for cannonjs physics engine
   window.CANNON = CANNON;
-  let game = new App('renderCanvas');
+  const game = new App('renderCanvas');
   game.createScene();
   game.modifySettings();
   game.createCamera();

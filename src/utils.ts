@@ -7,10 +7,10 @@ export class Utils {
     /**
      * Creates a basic ground
      */
-    public static createGround(scene: BABYLON.Scene): BABYLON.Mesh {
+    static createGround(scene: BABYLON.Scene): BABYLON.Mesh {
 
-        //groundMaterial.diffuseTexture.uScale = groundMaterial.diffuseTexture.vScale = 4;
-        let ground = BABYLON.Mesh.CreateGroundFromHeightMap(
+        // GroundMaterial.diffuseTexture.uScale = groundMaterial.diffuseTexture.vScale = 4;
+        const ground = BABYLON.Mesh.CreateGroundFromHeightMap(
             "ground",
             "assets/texture/height-map/D2.png",
             2000,
@@ -21,7 +21,7 @@ export class Utils {
             scene,
             false,
             () => {
-                let groundMaterial = new BABYLON.StandardMaterial("groundMaterial", scene);
+                const groundMaterial = new BABYLON.StandardMaterial("groundMaterial", scene);
                 groundMaterial.diffuseTexture = new BABYLON.Texture("assets/texture/height-map/C2W.png", scene);
                 ground.material = groundMaterial;
                 ground.checkCollisions = true;
@@ -35,10 +35,10 @@ export class Utils {
     /**
      * Creates a second ground and adds a watermaterial to it
      */
-    public static createWater(scene: BABYLON.Scene): BABYLON.WaterMaterial {
+    static createWater(scene: BABYLON.Scene): BABYLON.WaterMaterial {
         // Water
-        let waterMesh = BABYLON.Mesh.CreateGround("waterMesh", 512, 512, 32, scene, false);
-        let waterMaterial = Utils.createWaterMaterial("water", "./assets/texture/waterbump.png", scene);
+        const waterMesh = BABYLON.Mesh.CreateGround("waterMesh", 512, 512, 32, scene, false);
+        const waterMaterial = Utils.createWaterMaterial("water", "./assets/texture/waterbump.png", scene);
         waterMesh.material = waterMaterial;
         waterMesh.position.y = 4;
 
@@ -48,10 +48,10 @@ export class Utils {
     /**
      * Creates a BABYLONJS GUI with a single Button
      */
-    public static createGui(btnText: string, btnClicked: (button: GUI.Button) => void) {
+    static createGui(btnText: string, btnClicked: (button: GUI.Button) => void) {
 
-        let guiTexture = GUI.AdvancedDynamicTexture.CreateFullscreenUI("UI");
-        let btnTest = GUI.Button.CreateSimpleButton("but1", btnText);
+        const guiTexture = GUI.AdvancedDynamicTexture.CreateFullscreenUI("UI");
+        const btnTest = GUI.Button.CreateSimpleButton("but1", btnText);
         btnTest.width = "150px";
         btnTest.height = "40px";
         btnTest.color = "white";
@@ -73,8 +73,8 @@ export class Utils {
      * Returns Observable of mesh array, which are loaded from a file.
      * After mesh importing all meshes become given scaling, position and rotation.
      */
-    public static createMeshFromObjFile(folderName: string, fileName: string, scene: BABYLON.Scene,
-                                        scaling?: BABYLON.Vector3, position?: BABYLON.Vector3, rotationQuaternion?: BABYLON.Quaternion): Observable<BABYLON.AbstractMesh[]> {
+    static createMeshFromObjFile(folderName: string, fileName: string, scene: BABYLON.Scene,
+                                 scaling?: BABYLON.Vector3, position?: BABYLON.Vector3, rotationQuaternion?: BABYLON.Quaternion): Observable<BABYLON.AbstractMesh[]> {
 
         if (!fileName) {
             return Observable.throw("Utils.createMeshFromObjFile: parameter fileName is empty");
@@ -88,7 +88,7 @@ export class Utils {
         if (!position) position = BABYLON.Vector3.Zero();
         if (!rotationQuaternion) rotationQuaternion = BABYLON.Quaternion.RotationYawPitchRoll(0, 0, 0);
 
-        let assetsFolder = './assets/' + folderName;
+        const assetsFolder = `./assets/${folderName}`;
 
         return new Observable(observer => {
             BABYLON.SceneLoader.ImportMesh(null, assetsFolder, fileName, scene,
@@ -100,7 +100,7 @@ export class Utils {
                         mesh.rotationQuaternion = rotationQuaternion;
                         mesh.scaling = scaling;
                     });
-                    console.log("Imported Mesh: " + fileName);
+                    console.log(`Imported Mesh: ${fileName}`);
                     observer.next(meshes);
                 });
         });
@@ -109,7 +109,7 @@ export class Utils {
     /**
      * Creates a new skybox with the picttures under fileName.
      */
-    public static createSkybox(name: string, fileName: string, scene: BABYLON.Scene): BABYLON.Mesh {
+    static createSkybox(name: string, fileName: string, scene: BABYLON.Scene): BABYLON.Mesh {
         if (!name) {
             console.error("Utils.createSkyBox: name is not defined");
             return;
@@ -124,8 +124,8 @@ export class Utils {
         }
 
         // Skybox
-        let skybox = BABYLON.Mesh.CreateBox(name, 1000.0, scene);
-        let skyboxMaterial = new BABYLON.StandardMaterial(name, scene);
+        const skybox = BABYLON.Mesh.CreateBox(name, 1000.0, scene);
+        const skyboxMaterial = new BABYLON.StandardMaterial(name, scene);
         skyboxMaterial.backFaceCulling = false;
         skyboxMaterial.reflectionTexture = new BABYLON.CubeTexture("./assets/texture/skybox/TropicalSunnyDay", scene);
         skyboxMaterial.reflectionTexture.coordinatesMode = BABYLON.Texture.SKYBOX_MODE;
@@ -138,7 +138,7 @@ export class Utils {
     /**
      * Creates a new WaterMaterial Object with a given name. The noiseFile descrips the noise in the water,
      */
-    public static createWaterMaterial(name: string, noiseFile: string, scene: BABYLON.Scene): BABYLON.WaterMaterial {
+    static createWaterMaterial(name: string, noiseFile: string, scene: BABYLON.Scene): BABYLON.WaterMaterial {
         if (!name) {
             console.error("Utils.createWaterMaterial: name is not defined");
             return;
@@ -152,7 +152,7 @@ export class Utils {
             return;
         }
         // Water material
-        let water = new BABYLON.WaterMaterial(name, scene);
+        const water = new BABYLON.WaterMaterial(name, scene);
         water.bumpTexture = new BABYLON.Texture(noiseFile, scene);
         // Water properties
         water.windForce = -15;
@@ -169,9 +169,9 @@ export class Utils {
     /**
      * Loads a shark model from .obj file and adds it scene.
      */
-    public static createShark(scene: BABYLON.Scene): Observable<BABYLON.AbstractMesh> {
+    static createShark(scene: BABYLON.Scene): Observable<BABYLON.AbstractMesh> {
         // create a mesh object with loaded from file
-        let rootMesh = BABYLON.MeshBuilder.CreateBox("rootMesh", {size: 1}, scene);
+        const rootMesh = BABYLON.MeshBuilder.CreateBox("rootMesh", {size: 1}, scene);
         rootMesh.isVisible = false;
         rootMesh.position.y = 0.4;
         rootMesh.rotation.y = -3 * Math.PI / 4;
@@ -187,5 +187,4 @@ export class Utils {
                 });
         });
     }
-
 }

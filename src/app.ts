@@ -1,6 +1,5 @@
-import {Utils} from './utils';
 import * as BABYLON from 'babylonjs';
-import * as GUI from "babylonjs-gui";
+import {Utils} from './utils';
 
 export class App {
 
@@ -12,7 +11,7 @@ export class App {
 
     constructor(canvasElement: string) {
         // Create canvas and engine
-        this._canvas = <HTMLCanvasElement>document.getElementById(canvasElement);
+        this._canvas = document.getElementById(canvasElement) as HTMLCanvasElement;
         this._engine = new BABYLON.Engine(this._canvas, true);
     }
 
@@ -30,7 +29,7 @@ export class App {
         Utils.createGround(this._scene);
 
         // Physics engine also works
-        let gravity = new BABYLON.Vector3(0, -0.9, 0);
+        const gravity = new BABYLON.Vector3(0, -0.9, 0);
         this._scene.enablePhysics(gravity, new BABYLON.CannonJSPlugin());
     }
 
