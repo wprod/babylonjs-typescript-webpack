@@ -73,8 +73,14 @@ export class Utils {
      * Returns Observable of mesh array, which are loaded from a file.
      * After mesh importing all meshes become given scaling, position and rotation.
      */
-    static createMeshFromObjFile(folderName: string, fileName: string, scene: BABYLON.Scene,
-                                 scaling?: BABYLON.Vector3, position?: BABYLON.Vector3, rotationQuaternion?: BABYLON.Quaternion): Observable<BABYLON.AbstractMesh[]> {
+    static createMeshFromObjFile(
+        folderName: string,
+        fileName: string,
+        scene: BABYLON.Scene,
+        scaling?: BABYLON.Vector3,
+        position?: BABYLON.Vector3,
+        rotationQuaternion?: BABYLON.Quaternion
+    ): Observable<BABYLON.AbstractMesh[]> {
 
         if (!fileName) {
             return Observable.throw("Utils.createMeshFromObjFile: parameter fileName is empty");
@@ -124,13 +130,18 @@ export class Utils {
         }
 
         // Skybox
-        const skybox = BABYLON.Mesh.CreateBox(name, 1000.0, scene);
-        const skyboxMaterial = new BABYLON.StandardMaterial(name, scene);
+        const skybox = BABYLON.Mesh.CreateBox("skyBox", 1.0, scene);
+        const skyboxMaterial = new BABYLON.StandardMaterial("skyBox", scene);
         skyboxMaterial.backFaceCulling = false;
         skyboxMaterial.reflectionTexture = new BABYLON.CubeTexture("./assets/texture/skybox/TropicalSunnyDay", scene);
         skyboxMaterial.reflectionTexture.coordinatesMode = BABYLON.Texture.SKYBOX_MODE;
-        skyboxMaterial.diffuseColor = new BABYLON.Color3(0, 0, 0);
+        skyboxMaterial.diffuseColor = new BABYLON.Color3(100, 0, 0);
         skyboxMaterial.specularColor = new BABYLON.Color3(0, 0, 0);
+        skyboxMaterial.disableLighting = true;
+
+        skyboxMaterial.backFaceCulling = false;
+        skyboxMaterial.reflectionTexture = new BABYLON.CubeTexture("./assets/texture/skybox/TropicalSunnyDay", scene);
+        skyboxMaterial.reflectionTexture.coordinatesMode = BABYLON.Texture.SKYBOX_MODE;
         skyboxMaterial.disableLighting = true;
         skybox.material = skyboxMaterial;
     }

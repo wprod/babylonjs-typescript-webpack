@@ -1,13 +1,14 @@
 import * as BABYLON from 'babylonjs';
-import {Utils} from './utils';
+import { Utils } from './utils';
 
 export class App {
-
     private _canvas: HTMLCanvasElement;
     private _engine: BABYLON.Engine;
     private _scene: BABYLON.Scene;
     private _camera: BABYLON.FreeCamera;
     private _light: BABYLON.Light;
+
+    private pointerLocked: boolean;
 
     constructor(canvasElement: string) {
         // Create canvas and engine
@@ -35,8 +36,15 @@ export class App {
 
     modifySettings() {
         this._scene.onPointerDown = () => {
-            this._canvas.requestPointerLock();
-        }
+            if (!this.pointerLocked) {
+                this._canvas.requestPointerLock();
+            }
+        };
+
+        document.addEventListener('pointerlockchange', () => {
+            const element = document.pointerLockElement || null;
+            this.pointerLocked = !!element;
+        })
     }
 
     /**
@@ -46,7 +54,7 @@ export class App {
         this._camera = new BABYLON.FreeCamera("Camera", new BABYLON.Vector3(0, 0, 1), this._scene);
         this._camera.attachControl(this._canvas, true);
         this._camera.checkCollisions = true;
-        this._camera.applyGravity = true;
+        // this._camera.applyGravity = true;
 
         this._camera.keysUp.push('z'.charCodeAt(0));
         this._camera.keysUp.push('Z'.charCodeAt(0));
