@@ -1,5 +1,6 @@
 import * as BABYLON from 'babylonjs';
 import * as GUI from 'babylonjs-gui';
+import {FurMaterial} from 'babylonjs-materials';
 import {Observable} from 'rxjs';
 
 export class Utils {
@@ -15,34 +16,55 @@ export class Utils {
             "assets/texture/height-map/D2.png",
             2000,
             2000,
-            20,
-            0,
             200,
+            0,
+            100,
             scene,
             false,
             () => {
-                const groundMaterial = new BABYLON.StandardMaterial("groundMaterial", scene);
-                groundMaterial.diffuseTexture = new BABYLON.Texture("assets/texture/height-map/C2W.png", scene);
-                ground.material = groundMaterial;
+
+                const furMaterial = new FurMaterial("fur", scene);
+                furMaterial.highLevelFur = true;
+                furMaterial.furLength = 10;
+                furMaterial.furAngle = 0;
+                furMaterial.diffuseTexture = new BABYLON.Texture("https://images.unsplash.com/photo-1516642898673-edd1ced08e87?ixlib=rb-1.2.1&q=80&fm=jpg&crop=entropy&cs=tinysrgb&w=400&fit=max&ixid=eyJhcHBfaWQiOjE0NTg5fQ", scene);
+                furMaterial.furTexture = FurMaterial.GenerateTexture("furTexture", scene);
+                furMaterial.furColor = new BABYLON.Color3(1, 1, 1);
+                furMaterial.furSpacing = 6;
+                furMaterial.furDensity = 10;
+                furMaterial.furSpeed = 1000;
+                furMaterial.furGravity = new BABYLON.Vector3(0, -1, 0);
+
+                ground.material = furMaterial;
+
+                var shells = FurMaterial.FurifyMesh(ground, 5);
+
                 ground.checkCollisions = true;
             });
+
+
 
         ground.position.y = -100;
 
         return ground;
     }
 
-    /**
-     * Creates a second ground and adds a watermaterial to it
-     */
-    static createWater(scene: BABYLON.Scene): BABYLON.WaterMaterial {
-        // Water
-        const waterMesh = BABYLON.Mesh.CreateGround("waterMesh", 512, 512, 32, scene, false);
-        const waterMaterial = Utils.createWaterMaterial("water", "./assets/texture/waterbump.png", scene);
-        waterMesh.material = waterMaterial;
-        waterMesh.position.y = 4;
+    static createTank(scene) {
+        const tankMesh = BABYLON.MeshBuilder.CreateBox('Tank_1', {height: 2, depth: 3, width: 5}, scene);
+        tankMesh.enableEdgesRendering();
+        tankMesh.edgesWidth = 4;
+        tankMesh.edgesColor = new BABYLON.Color4(.8,.0,.6, 1.);
 
-        return waterMaterial;
+        const tankMaterial = new BABYLON.StandardMaterial('TankMaterial', scene);
+        tankMaterial.diffuseColor = BABYLON.Color3.Red();
+        tankMesh.material = tankMaterial;
+        tankMesh.position.y += 2;
+
+        return tankMesh;
+    }
+
+    static createFollowCamera() {
+
     }
 
     /**
@@ -89,10 +111,19 @@ export class Utils {
             return Observable.throw("Utils.createMeshFromObjFile: parameter fileName is empty");
         }
 
-        if (!folderName) folderName = "";
-        if (!scaling) scaling = BABYLON.Vector3.One();
-        if (!position) position = BABYLON.Vector3.Zero();
-        if (!rotationQuaternion) rotationQuaternion = BABYLON.Quaternion.RotationYawPitchRoll(0, 0, 0);
+        // tslint:disable:no-parameter-reassignment
+        if (!folderName) {
+            folderName = "";
+        }
+        if (!scaling) {
+            scaling = BABYLON.Vector3.One();
+        }
+        if (!position) {
+            position = BABYLON.Vector3.Zero();
+        }
+        if (!rotationQuaternion) {
+            rotationQuaternion = BABYLON.Quaternion.RotationYawPitchRoll(0, 0, 0);
+        }
 
         const assetsFolder = `./assets/${folderName}`;
 
@@ -130,7 +161,7 @@ export class Utils {
         }
 
         // Skybox
-        const skybox = BABYLON.Mesh.CreateBox("skyBox", 1.0, scene);
+        const skybox = BABYLON.Mesh.CreateBox("skyBox", 2000, scene);
         const skyboxMaterial = new BABYLON.StandardMaterial("skyBox", scene);
         skyboxMaterial.backFaceCulling = false;
         skyboxMaterial.reflectionTexture = new BABYLON.CubeTexture("./assets/texture/skybox/TropicalSunnyDay", scene);
@@ -144,58 +175,5 @@ export class Utils {
         skyboxMaterial.reflectionTexture.coordinatesMode = BABYLON.Texture.SKYBOX_MODE;
         skyboxMaterial.disableLighting = true;
         skybox.material = skyboxMaterial;
-    }
-
-    /**
-     * Creates a new WaterMaterial Object with a given name. The noiseFile descrips the noise in the water,
-     */
-    static createWaterMaterial(name: string, noiseFile: string, scene: BABYLON.Scene): BABYLON.WaterMaterial {
-        if (!name) {
-            console.error("Utils.createWaterMaterial: name is not defined");
-            return;
-        }
-        if (!noiseFile) {
-            console.error("Utils.createWaterMaterial: noiseFile is not defined");
-            return;
-        }
-        if (!scene) {
-            console.error("Utils.createWaterMaterial: scene is not defined");
-            return;
-        }
-        // Water material
-        const water = new BABYLON.WaterMaterial(name, scene);
-        water.bumpTexture = new BABYLON.Texture(noiseFile, scene);
-        // Water properties
-        water.windForce = -15;
-        water.waveHeight = 1;
-        water.windDirection = new BABYLON.Vector2(1, 1);
-        water.waterColor = new BABYLON.Color3(0.25, 0.88, 0.82);
-        water.colorBlendFactor = 0.3;
-        water.bumpHeight = 0.1;
-        water.waveLength = 0.1;
-
-        return water;
-    }
-
-    /**
-     * Loads a shark model from .obj file and adds it scene.
-     */
-    static createShark(scene: BABYLON.Scene): Observable<BABYLON.AbstractMesh> {
-        // create a mesh object with loaded from file
-        const rootMesh = BABYLON.MeshBuilder.CreateBox("rootMesh", {size: 1}, scene);
-        rootMesh.isVisible = false;
-        rootMesh.position.y = 0.4;
-        rootMesh.rotation.y = -3 * Math.PI / 4;
-
-        return new Observable(observer => {
-            Utils.createMeshFromObjFile("mesh/", "mesh.obj", scene, new BABYLON.Vector3(1, 1, 1))
-                .subscribe(meshes => {
-                    meshes.forEach((mesh) => {
-                        mesh.parent = rootMesh;
-                    });
-
-                    observer.next(rootMesh);
-                });
-        });
     }
 }

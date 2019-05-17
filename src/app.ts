@@ -1,9 +1,9 @@
 import * as BABYLON from 'babylonjs';
-import { Utils } from './utils';
+import {Utils} from './utils';
 
 export class App {
-    private _canvas: HTMLCanvasElement;
-    private _engine: BABYLON.Engine;
+    private readonly _canvas: HTMLCanvasElement;
+    private readonly _engine: BABYLON.Engine;
     private _scene: BABYLON.Scene;
     private _camera: BABYLON.FreeCamera;
     private _light: BABYLON.Light;
@@ -29,6 +29,8 @@ export class App {
         // creates the sandy ground
         Utils.createGround(this._scene);
 
+        Utils.createTank(this._scene);
+
         // Physics engine also works
         const gravity = new BABYLON.Vector3(0, -0.9, 0);
         this._scene.enablePhysics(gravity, new BABYLON.CannonJSPlugin());
@@ -40,11 +42,6 @@ export class App {
                 this._canvas.requestPointerLock();
             }
         };
-
-        document.addEventListener('pointerlockchange', () => {
-            const element = document.pointerLockElement || null;
-            this.pointerLocked = !!element;
-        })
     }
 
     /**
@@ -73,8 +70,12 @@ export class App {
      * Starts the animation loop.
      */
     animate(): void {
+        const tank = this._scene.getMeshByName('Tank_1');
+
+
         // run the render loop
         this._engine.runRenderLoop(() => {
+            tank.position.z -= .1;
             this._scene.render();
         });
 
